@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feedback-dev
+  template:
+    metadata:
+      labels:
+        app: feedback-dev
+    spec:
+      containers:
+      - name: feedback
+        image: quay.io/neilpitts/feedback-dev:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: neilpitts-pull-secret

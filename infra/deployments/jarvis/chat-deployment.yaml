@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jarvis-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jarvis-dev
+  template:
+    metadata:
+      labels:
+        app: jarvis-dev
+    spec:
+      containers:
+      - name: jarvis-dev
+        image: quay.io/neilpitts/jarvis:dev
+        imagePullPolicy: Always # Or IfNotPresent, if you use unique tag
+        envFrom:
+        - configMapRef:
+            name: dev-config # Change this per environment
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: neilpitts-pull-secret

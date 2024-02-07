@@ -1,0 +1,74 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: jarvis-dev.paragonone.com
+    http:
+      paths:
+      - path: /v1/conversation
+        pathType: Prefix
+        backend:
+          service:
+            name: jarvis-dev
+            port:
+              number: 80
+      - path: /feedback
+        pathType: Prefix
+        backend:
+          service:
+            name: feedback-dev
+            port:
+              number: 80
+  - host: jarvis-staging.paragonone.com
+    http:
+      paths:
+      - path: /v1/conversation
+        pathType: Prefix
+        backend:
+          service:
+            name: jarvis-stage
+            port:
+              number: 80
+  - host: jarvis.paragonone.com
+    http:
+      paths:
+      - path: /v1/conversation
+        pathType: Prefix
+        backend:
+          service:
+            name: jarvis-prod
+            port:
+              number: 80
+      - path: /feedback
+        pathType: Prefix
+        backend:
+          service:
+            name: feedback-prod
+            port:
+              number: 80
+      - path: /k8s
+        pathType: Prefix
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
+  tls:
+  - hosts:
+    - jarvis-dev.paragonone.com
+    - jarvis-staging.paragonone.com
+    - jarvis.paragonone.com
+    secretName: my-service-tls

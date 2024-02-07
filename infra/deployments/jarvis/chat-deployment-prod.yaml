@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jarvis-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jarvis-prod
+  template:
+    metadata:
+      labels:
+        app: jarvis-prod
+    spec:
+      containers:
+      - name: jarvis-prod
+        image: quay.io/neilpitts/jarvis:prod
+        imagePullPolicy: Always # Or IfNotPresent, if you use unique tag
+        envFrom:
+        - configMapRef:
+            name: prod-config # Change this per environment
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: neilpitts-pull-secret

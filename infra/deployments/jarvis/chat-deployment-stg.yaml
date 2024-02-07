@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jarvis-stg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jarvis-stg
+  template:
+    metadata:
+      labels:
+        app: jarvis-stg
+    spec:
+      containers:
+      - name: jarvis-stg
+        image: quay.io/neilpitts/jarvis:stage
+        imagePullPolicy: Always # Or IfNotPresent, if you use unique tag
+        envFrom:
+        - configMapRef:
+            name: stage-config # Change this per environment
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: neilpitts-pull-secret

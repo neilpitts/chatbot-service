@@ -1,0 +1,17 @@
+export class AgentFactory extends BaseAgentFactory{
+    constructor(){}
+
+    createAgent(){
+        // creates a new agent pass in agent options
+        // todo: have to come up with some agent options
+        return new Agent();
+    }
+
+    //  agents not need are removed
+    removeAgent() {
+        return;
+    }
+
+
+    // todo: add intenal p[riovate methods
+}

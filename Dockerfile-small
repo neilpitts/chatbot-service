@@ -1,0 +1,30 @@
+# ---- Base Node ----
+FROM node:18-alpine AS base
+# Set the working directory
+WORKDIR /usr/src/app
+# Copy project file (package.json, yarn.lock)
+COPY package.json yarn.lock ./
+
+# ---- Dependencies ----
+FROM base AS dependencies
+# Install yarn
+RUN apk update && apk add --no-cache yarn
+# Install app dependencies including 'devDependencies'
+RUN yarn install
+# Copy local TypeScript files and compile them
+COPY . .
+RUN yarn run build
+
+# ---- Release ----
+FROM base AS release
+# Install yarn and app dependencies excluding 'devDependencies'
+RUN apk update && apk add --no-cache yarn && yarn install --production
+# Install nano and vi
+RUN apk --no-cache add nano vim
+# Copy built app from dependencies stage
+COPY --from=dependencies /usr/src/app/dist ./dist
+# Expose port
+EXPOSE 3000
+CMD [ "node", "dist/server.js" ]
+
+

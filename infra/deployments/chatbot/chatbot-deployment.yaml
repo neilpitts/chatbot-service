@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatbot-app-deployment
+  labels:
+    app: react-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chatbot-app
+  template:
+    metadata:
+      labels:
+        app: chatbot-app
+    spec:
+      containers:
+      - name: chat
+        image: quay.io/neilpitts/chatbot:experimental
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+      - name: neilpitts-pull-secret
